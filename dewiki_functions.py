@@ -17,13 +17,12 @@ def analyze_chunk(text):
     try:
         if '<redirect title="' in text:  # this is not the main article
             return None
-        if '(disambiguation)' in text:  # this is not an article
+        if '(disambiguation)' in text:
             return None
-        else:
-            title = text.split('<title>')[1].split('</title>')[0]
-            title = htt(title)
-            if ':' in title:  # most articles with : in them are not articles we care about
-                return None
+        title = text.split('<title>')[1].split('</title>')[0]
+        title = htt(title)
+        if ':' in title:  # most articles with : in them are not articles we care about
+            return None
         serial = text.split('<id>')[1].split('</id>')[0]
         content = text.split('</text')[0].split('<text')[1].split('>', maxsplit=1)[1]
         content = dewiki(content)
@@ -34,8 +33,7 @@ def analyze_chunk(text):
 
 
 def save_article(article, savedir):
-    doc = analyze_chunk(article)
-    if doc:
+    if doc := analyze_chunk(article):
         print('SAVING:', doc['title'])
         filename = doc['id'] + '.json'
         with open(savedir + filename, 'w', encoding='utf-8') as outfile:
